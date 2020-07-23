@@ -1,0 +1,132 @@
+@import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+@import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700);
+
+body {
+  font-family: "Fjalla One", "Source Sans", "Lato", "Fira Sans", sans-serif; 
+}
+
+h2, h3 {
+  font-family: 'Yanone Kaffeesatz';
+  font-weight: normal;
+}
+
+h1 {
+  font-family: 'Yanone Kaffeesatz';
+  font-weight: bold;
+  color: #008B8B;
+  text-align: left;
+  padding-left: 200px;
+}
+
+.remark-code, .remark-inline-code { font-family: 'Source Code Pro', 'Lucida Console', Monaco, monospace; }
+
+
+p {
+  font-size:150%;
+}
+
+a, a > code {
+  color: #3AA8C1;
+  text-decoration: none;
+}
+.footnote {
+  position: absolute;
+  bottom: 2em;
+  padding-right: 4em;
+  color: #4287c7;
+  font-size: 0.7em;
+}
+.remark-code, .remark-inline-code {
+  background-color: #c8c8c8;
+  font-size: 110%;
+}
+.remark-code-line-highlighted     {
+  background-color: #fff;
+}
+
+.section h1 {
+  font-size: 350%;
+  padding-left: 180px;
+}
+
+.title-slide {
+  background-image: url('images/RStudio-Logo-Gray.png'), url('images/kenya.png');
+  background-repeat: no-repeat;
+  background-position: 5% 5%, 98% 92%;
+  background-size: 300px, 240px;
+}
+
+.remark-slide .title-slide {
+  padding-left: 200px;
+  padding-top: 110px;
+}
+
+
+/* Two-column layout */
+.left-column {
+  color: #777;
+  width: 50%;
+  height: 92%;
+  float: left;
+}
+.left-column h2:last-of-type, .left-column h3:last-child {
+  color: #000;
+}
+.right-column {
+  width: 50%;
+  float: right;
+  padding-top: 1em;
+}
+.pull-left {
+  float: left;
+  width: 47%;
+}
+.pull-right {
+  float: right;
+  width: 47%;
+}
+.pull-right ~ * {
+  clear: both;
+}
+
+blockquote {
+  border-left: solid 5px lightgray;
+  padding-left: 1em;
+}
+table {
+  margin: auto;
+  border-bottom: 1px solid #666;
+}
+table thead th { border-bottom: 1px solid #ddd; }
+th, td {
+  padding: 5px;
+  font-size: 36px;
+}
+thead, tfoot, tr:nth-child(even) { background: #eee }
+
+@page { margin: 0; }
+@media print {
+  .remark-slide-scaler {
+    width: 100% !important;
+    height: 100% !important;
+    transform: scale(1) !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+}
+
+.remark-slide-content {
+  padding-left: 220px;
+  padding-right: 40px;
+}
+
+.large { font-size: 130% }
+.small { font-size: 70% }
+
+/*.mjx-char { font-size: 160% }*/
+
+.remark-code-line-highlighted {
+    background-color: #d9f4f3;
+}
+

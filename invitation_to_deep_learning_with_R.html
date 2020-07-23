@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>An invitation to deep learning with R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Sigrid Keydana, RStudio" />
+    <script src="libs/header-attrs-2.3/header-attrs.js"></script>
+    <link rel="stylesheet" href="theme/rstudio.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# An invitation to deep learning with R
+### Sigrid Keydana, RStudio
+### NairobiR, 08/01/2020
+
+---
+
+
+class: middle center section
+
+# Talk deep learning, talk data
+
+
+---
+
+# The two faces of data 
+
+&lt;img src="data.png" width="80%" /&gt;
+
+---
+
+# The promise
+
+&lt;br /&gt;
+
+
+- Data-driven / empirical decision making (as opposed to ...)
+
+- So many problems we could possibly solve ...
+
+- _Deep learning_: Data + compute power + algorithms (+ ...?)
+
+---
+
+# The threat
+
+
+- Lots of ways this can go wrong:
+
+  - enhance inequality, broaden gaps
+  
+  - enhance disadvantages for those already discriminated against
+  
+  - enforce _bias_
+  
+- What can be biased:
+
+  - data
+  
+  - algorithms
+  
+  - people, societies, systems ... 
+  
+  
+
+---
+
+# A few starting points 
+
+(_from someone who's just starting herself_)
+
+
+- [Timnit Gebru &amp; Emily Denton, Tutorial on Fairness, Accountability, Transparency, and Ethics in Computer Vision at CVPR 2020](https://sites.google.com/view/fatecv-tutorial/schedule)
+
+- [Ben Green, Data Science as Political Action: Grounding Data Science in a Politics of Justice.](https://arxiv.org/abs/1811.03435)
+
+- [Decolonial AI: Decolonial Theory as Sociotechnical Foresight in Artificial Intelligence](https://arxiv.org/abs/2007.04068)
+
+- ... and all the "classics": Ruha Benjamin, Race after Technology; C. Ignazio &amp; L.F. Klein, Data Feminism ...
+
+
+
+
+---
+# That said:
+
+
+&lt;br /&gt;
+
+&gt; _"it's better to know than to not know"_
+
+&lt;br /&gt;
+
+- Learning about deep learning is learning 
+
+ - what is possible now
+
+ - what could be possible soon
+ 
+ - what to watch out for
+ 
+ - what could be used to make this world better
+
+
+
+---
+class: middle center section
+
+# What is deep learning?
+
+---
+# Situating deep learning
+
+&lt;figure&gt;
+&lt;img src = "learning.png" width = 800px height=500px/&gt;
+&lt;figcaption&gt;Source: &lt;a href="https://www.deeplearningbook.org/"&gt;Goodfellow et al.,  Deep Learning. 2016.&lt;/a&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+---
+# A neural network
+
+
+&lt;figure&gt;
+&lt;img src = "playground.png" width = 90%/&gt;
+&lt;figcaption&gt;&lt;a href="https://playground.tensorflow.org/"&gt;TensorFlow playground&lt;/a&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+---
+# Representation matters
+
+&lt;figure&gt;
+&lt;img src = "representation_matters.png" width = 800px height=500px/&gt;
+&lt;figcaption&gt;Source: &lt;a href="https://www.deeplearningbook.org/"&gt;Goodfellow et al.,  Deep Learning. 2016.&lt;/a&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+---
+# Why depth
+
+&lt;figure&gt;
+&lt;img src = "feature_hierarchy.png" width = 60%/&gt;
+&lt;figcaption&gt;Source: &lt;a href="https://www.deeplearningbook.org/"&gt;Goodfellow et al.,  Deep Learning. 2016.&lt;/a&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+---
+class: middle center section
+
+
+# Meet the actors
+
+
+---
+# Layers of neurons
+
+Neurons are units of computation, arranged in layers.
+
+
+&lt;figure&gt;
+&lt;img src = "neurons_layers.png" width = 70%/&gt;
+&lt;/figure&gt;
+
+Each neuron aggregates the inputs from its incoming connections, transforms the aggregate, and passes it on to the next layer neurons. 
+
+
+                      
+---
+# Activations
+
+
+Activations are the actual _values_ passed from one neuron to another. 
+
+
+                    
+                            my output is 22.2
+  
+       layer 1, neuron 1 ---------------------&gt; layer 2, neuron 1
+                            
+                            my output is -0.07
+       
+       layer 1, neuron 1 ---------------------&gt; layer 2, neuron 2
+
+             
+Often activations are the result of applying an _activation function_ to the raw aggregate of incoming values.
+
+
+---
+# Loss 
+
+&lt;br /&gt;
+
+
+The _loss_ is the difference between the target (ground truth) and network's output. 
+
+&lt;br /&gt;
+                    
+                      
+                    
+                            
+  
+       output neuron 1: I say 0.33  ---------&gt;  target: sorry, should be 25
+                            
+                           
+       ---&gt; absolute error is 24.67     
+       ---&gt; squared error is 608.6089
+       ---&gt; ...
+
+
+---
+# Weights
+&lt;br /&gt;
+
+
+Weights are connection strengths _learned by_ the network.
+
+&lt;br /&gt;
+                    
+                      
+                    
+                            weight = 0.77
+  
+       layer 1, neuron 1 ---------------------&gt; layer 2, neuron 1
+                            
+                            weight = 0.02
+       
+       layer 1, neuron 1 ---------------------&gt; layer 2, neuron 2
+
+
+---
+# Optimization
+
+The process of finding good weights, based on the current loss.
+
+Updates are computed by an _optimizer_ and applied via _backprop_ (backpropagation).
+
+&lt;figure&gt;
+&lt;img src = "colah.png" width = 80%/&gt;
+&lt;figcaption&gt;Source: &lt;a href="https://colah.github.io/posts/2015-08-Backprop/"&gt;Chris Olah's post on backprop&lt;/a&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+
+---
+#  In a nutshell
+
+&lt;figure&gt;
+&lt;img src = "fchollet.png" width = 70%/&gt;
+&lt;figcaption&gt;Source: F. Chollet &amp; JJ Allaire, Deep Learning with R. 2018&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+
+---
+class: middle center section
+
+# Deep learning with R
+
+---
+# TensorFlow / Keras - from R?
+
+Yes!
+
+- Website (installation, tutorials, guides ...): https://tensorflow.rstudio.com/tutorials/
+
+- GitHub: https://github.com/rstudio/tensorflow, https://github.com/rstudio/keras
+
+- Blog: https://blogs.rstudio.com/ai/
+
+- Book (1st ed., 2018): F. Chollet &amp; JJ Allaire, Deep Learning with R.
+
+- YouTube: https://www.youtube.com/c/mlverse
+
+
+---
+# Install
+
+
+```r
+# install R packages
+install.packages("tensorflow")
+install.packages("keras")
+install.packages("tfdatasets")
+
+library(tensorflow)
+# installs the Python backend
+# by default, will create a dedicated Miniconda environment
+# named r-reticulate
+# if you don't have Miniconda installed, you'll be prompted whether
+# reticulate may install it for you
+install_tensorflow()
+
+# what is the TensorFlow (Python) version,
+# and what environment does it run in?
+tensorflow::tf_config()
+```
+
+There is no separate installation of (Python) Keras required!
+
+---
+# Now let's assemble a neural network!  
+
+
+They all look like penguins to me ...
+
+
+&lt;figure&gt;
+&lt;img src = "lter_penguins.png" width = 70%/&gt;
+&lt;figcaption&gt;Artwork by @allisonhorst&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+
+--- 
+# 
+
+
+---
+class: middle center section
+
+# What now?
+
+
+
+---
+# Participate!
+
+
+
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
