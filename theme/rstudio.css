@@ -2,6 +2,7 @@
 @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
 @import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700);
 
+
 body {
   font-family: "Fjalla One", "Source Sans", "Lato", "Fira Sans", sans-serif; 
 }
@@ -15,8 +16,7 @@ h1 {
   font-family: 'Yanone Kaffeesatz';
   font-weight: bold;
   color: #008B8B;
-  text-align: left;
-  padding-left: 200px;
+  text-align: center;
 }
 
 .remark-code, .remark-inline-code { font-family: 'Source Code Pro', 'Lucida Console', Monaco, monospace; }
@@ -37,9 +37,9 @@ a, a > code {
   color: #4287c7;
   font-size: 0.7em;
 }
-.remark-code, .remark-inline-code {
+.remark-code {
   background-color: #c8c8c8;
-  font-size: 110%;
+  font-size: 100%;
 }
 .remark-code-line-highlighted     {
   background-color: #fff;
@@ -47,7 +47,6 @@ a, a > code {
 
 .section h1 {
   font-size: 350%;
-  padding-left: 180px;
 }
 
 .title-slide {
@@ -58,7 +57,6 @@ a, a > code {
 }
 
 .remark-slide .title-slide {
-  padding-left: 200px;
   padding-top: 110px;
 }
 
@@ -117,12 +115,13 @@ thead, tfoot, tr:nth-child(even) { background: #eee }
 }
 
 .remark-slide-content {
-  padding-left: 220px;
+  padding-left: 160px;
   padding-right: 40px;
 }
 
 .large { font-size: 130% }
 .small { font-size: 70% }
+
 
 /*.mjx-char { font-size: 160% }*/
 
@@ -130,3 +129,6 @@ thead, tfoot, tr:nth-child(even) { background: #eee }
     background-color: #d9f4f3;
 }
 
+.remark-slide .black {
+  background-color: #000000;
+}

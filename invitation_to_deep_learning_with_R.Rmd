@@ -20,7 +20,7 @@ class: middle center section
 
 ---
 
-# The two faces of data 
+# Two faces of data 
 
 <img src="data.png" width="80%" />
 
@@ -148,14 +148,13 @@ class: middle center section
 ---
 # Layers of neurons
 
-Neurons are units of computation, arranged in layers.
-
+Neurons are units of computation, arranged in layers. Each neuron aggregates the inputs from its incoming connections, transforms the aggregate, and passes it on to the next layer. 
 
 <figure>
 <img src = "neurons_layers.png" width = 70%/>
 </figure>
 
-Each neuron aggregates the inputs from its incoming connections, transforms the aggregate, and passes it on to the next layer neurons. 
+
 
 
                       
@@ -226,7 +225,7 @@ Weights are connection strengths _learned by_ the network.
 
 The process of finding good weights, based on the current loss.
 
-Updates are computed by an _optimizer_ and applied via _backprop_ (backpropagation).
+Updates are computed by an _optimizer_ and applied via _backpropagation_.
 
 <figure>
 <img src = "colah.png" width = 80%/>
@@ -238,7 +237,7 @@ Updates are computed by an _optimizer_ and applied via _backprop_ (backpropagati
 #  In a nutshell
 
 <figure>
-<img src = "fchollet.png" width = 70%/>
+<img src = "fchollet.png" width = 60%/>
 <figcaption>Source: F. Chollet & JJ Allaire, Deep Learning with R. 2018</figcaption>
 </figure>
 
@@ -301,8 +300,366 @@ They all look like penguins to me ...
 </figure>
 
 
---- 
-# 
+---
+# Data prep
+
+```{r, eval = FALSE}
+library(tidyverse)
+library(palmerpenguins)
+
+penguins_df <- na.omit(penguins)
+penguins_df <- penguins_df %>% 
+  # need numerical input, preferredly starting from 0
+  # conveniently, character data are already factors
+  mutate_if(is.factor, (function (x) as.numeric(x) - 1)) 
+```
+
+```{r, eval = FALSE}
+$ species           <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+$ island            <dbl> 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, …
+$ bill_length_mm    <dbl> 39.1, 39.5, 40.3, 36.7, 39.3, 38.9, …
+$ bill_depth_mm     <dbl> 18.7, 17.4, 18.0, 19.3, 20.6, …
+$ flipper_length_mm <int> 181, 186, 195, 193, 190, 181, …
+$ body_mass_g       <int> 3750, 3800, 3250, 3450, 3650, …
+$ sex               <dbl> 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, …
+$ year              <int> 2007, 2007, 2007, 2007, 2007, …
+```
+
+---
+# We have a mix of numerical and categorical predictors
+
+<br /> 
+
+Problems?
+
+<br />
+
+Options?
+
+ - one-hot encoding
+ 
+ - embedding
+
+
+---
+# Let's use one-hot encoding here
+
+```{r, eval=FALSE}
+x <- penguins_df %>% 
+  select(-species) %>%
+  map_at("island", ~ to_categorical(.x) %>% 
+           array_reshape(c(length(.x),
+                           length(levels(penguins$island))))) %>%
+  map_at("sex", ~ to_categorical(.x) %>% 
+           array_reshape(c(length(.x),
+                           length(levels(penguins$sex))))) %>%
+  abind::abind(along = 2)
+
+y <- penguins_df %>%
+  select(species) %>% 
+  pull() %>%
+  to_categorical()
+
+train_indices <- sample(1:nrow(x), 200)
+x_train <- x[train_indices, ]
+x_val <- x[-train_indices, ]
+y_train <- y[train_indices, ]
+y_val <- y[-train_indices, ]
+
+```
+
+---
+# Define a network
+
+<br /> 
+
+Excursion: Three types of architectures in Keras
+
+
+- sequential API:`keras_model_sequential()`
+
+- functional API: `keras_model()`
+
+- custom models: `keras_model_custom()`
+
+---
+# We need: A model
+
+The model definition basically is a listing of layers.
+
+```{r, eval=FALSE}
+model <- keras_model_sequential() %>%
+  # a fully connected layer
+  layer_dense(
+    units = 32, # this layer has 32 "neurons"
+    activation = "relu" # activation function is relu
+  ) %>%
+  # a stochastic ("noise") layer
+  layer_dropout(0.2) %>%
+  layer_dense(
+    units = 32,
+    activation = "relu"
+  ) %>%
+  layer_dropout(0.2) %>%
+  # output layer has 3 units, for 3 classes
+  layer_dense(units = 3, activation = "softmax")
+```
+
+
+
+---
+# We need: A loss function
+
+<br />
+
+Keras `compile` says how to optimize that model.
+
+
+```{r, eval=FALSE}
+model %>% compile(
+  loss = "categorical_crossentropy", #<<
+  optimizer = optimizer_rmsprop(),
+  metrics = "accuracy"
+)
+```
+
+
+---
+# We need: An optimizer
+
+<br />
+
+
+
+
+```{r, eval=FALSE}
+model %>% compile(
+  loss = "categorical_crossentropy", 
+  optimizer = optimizer_rmsprop(), #<<
+  metrics = "accuracy"
+)
+```
+
+(And here, you also tell Keras which metrics to monitor.)
+
+
+---
+# Ready to train
+
+
+We basically always want to monitor progress on a validation set.
+(This dataset is pretty small though.)
+
+```{r, eval = FALSE}
+history <- model %>% fit(
+  x_train,
+  y_train,
+  validation_data = list(x_val, y_val),
+  epochs = 100,
+  batch_size = 8
+)
+```
+
+<figure>
+<img src = "penguins_keras.png" width = 60%/>
+</figure>
+
+---
+# So that was classification ...
+
+Ready for something else? Enter _Generative Adversarial Networks_ (GANs):
+
+<figure>
+<img src = "gan.png" width = 90%/>
+<figcaption>Image source: https://arxiv.org/pdf/1710.07035.pdf</figcaption>
+</figure>
+
+
+---
+# Ready for something else?
+
+<br />
+
+<br />
+
+(Yeah, I asked already.)
+
+---
+class: middle center section
+
+
+# Can you keep a secret?
+
+---
+# Please allow me to introduce myself ...
+
+<figure>
+<img src = "gh.png" width = 100%/>
+</figure>
+
+
+---
+# The task: Generate digits (not - quite - MNIST)
+
+<br /> 
+[Kuzushiji MNIST](https://github.com/rois-codh/kmnist)
+
+
+<figure>
+<img src = "kuzushiji.png" width = 100%/>
+</figure>
+
+---
+# Get the data
+
+In `torch`, we always work with `dataset`s and `dataloaders` ... 
+
+```{r, eval = FALSE}
+# Kuzushiji MNIST comes with torch
+kmnist <- kmnist_dataset(
+    dir,
+    download = TRUE,
+    transform = function(x) {
+        x <- x$to(dtype = torch_float())/256
+        x <- 2*(x - 0.5)
+        x[newaxis,..]
+    }
+)
+
+# create a dataloader
+dl <- dataloader(kmnist, batch_size = batch_size, shuffle = TRUE)
+```
+
+
+---
+# Define the network ... (1/2)
+
+```{r, eval = FALSE}
+generator <- nn_module(
+  "generator",
+  initialize = function() {
+      self$main = nn_sequential(
+          nn_conv_transpose2d(latent_input_size, image_size * 4, 4, 1, 0, bias = FALSE),
+          nn_batch_norm2d(image_size * 4),
+          nn_relu(),
+          nn_conv_transpose2d(image_size * 4, image_size * 2, 4, 2, 1, bias = FALSE),
+          nn_batch_norm2d(image_size * 2),
+          nn_relu(),
+          nn_conv_transpose2d(image_size * 2, image_size, 4, 2, 2, bias = FALSE),
+          nn_batch_norm2d(image_size),
+          nn_relu(),
+          nn_conv_transpose2d(image_size, 1, 4, 2, 1, bias = FALSE),
+          nn_tanh()
+      )
+  },
+  forward = function(x) {
+      self$main(x)
+  }
+)
+```
+
+
+---
+# Define the network ... (2/2)
+
+```{r,eval=FALSE}
+discriminator <- nn_module(
+  "discriminator",
+  initialize = function() {
+      self$main = nn_sequential(
+          nn_conv2d(1, image_size, 4, 2, 1, bias = FALSE),
+          nn_leaky_relu(0.2, inplace = TRUE),
+          nn_conv2d(image_size, image_size * 2, 4, 2, 1,  bias = FALSE),
+          nn_batch_norm2d(image_size * 2),
+          nn_leaky_relu(0.2, inplace = TRUE),
+          nn_conv2d(image_size * 2, image_size * 4, 4, 2, 1,  bias = FALSE),
+          nn_batch_norm2d(image_size * 4),
+          nn_leaky_relu(0.2, inplace = TRUE),
+          nn_conv2d(image_size * 4, 1, 4, 2, 1,  bias = FALSE),
+          nn_sigmoid()
+      )
+  },
+  forward = function(x) {
+      self$main(x)
+  }
+)
+```
+
+
+
+
+---
+# What else? A loss function ...
+
+<br />
+
+
+
+```{r, eval=FALSE}
+criterion <- nn_bce_loss()
+```
+
+
+Binary cross-entropy. Used twice:
+
+- The discriminator has to decide, for every input it gets, if it was real or generated. _That decision could be right or wrong_.
+
+- The generator is judged by whether the discriminator's verdict on its creations is right or wrong. _Right is bad; wrong is good_.
+
+
+---
+# ... and an optimizer
+
+<br />
+
+Two, actually: Each module has their own.
+
+
+```{r, eval=FALSE}
+learning_rate <- 0.0002
+
+# this optimizer takes care of the discriminator's weights
+disc_optimizer <- optim_adam(disc$parameters, lr = learning_rate)
+
+# this optimizer takes care of the generator's weights
+gen_optimizer <- optim_adam(gen$parameters, lr = learning_rate)
+```
+
+---
+# And train!
+
+```{r, eval=FALSE}
+for (epoch in 1:num_epochs) {
+  for (b in enumerate(dl)) {
+      y_real <- torch_ones(b[[1]]$size()[1], device = device)
+      y_fake <- torch_zeros(b[[1]]$size()[1], device = device)
+      noise <- torch_randn(b[[1]]$size()[1], latent_input_size, 1, 1, device = device)
+      fake <- gen(noise)
+      img <- b[[1]]$to(device = device)
+
+      # update discriminator
+      disc_loss <- criterion(disc(img), y_real) + criterion(disc(fake$detach()), y_fake)
+      disc_optimizer$zero_grad()
+      disc_loss$backward()
+      disc_optimizer$step()
+
+      # update generator
+      gen_loss <- criterion(disc(fake), y_real)
+      gen_optimizer$zero_grad()
+      gen_loss$backward()
+      gen_optimizer$step()
+  }
+}
+```
+
+
+
+---
+# Monitoring generator skill over time ...
+
+<figure>
+<img src = "gan_over_time.png" width = 80%/>
+</figure>
 
 
 ---
@@ -313,13 +670,49 @@ class: middle center section
 
 
 ---
+# Practice ...?
+
+<br />
+
+Yeah, and 
+
+_Play around ...?_
+
+<br />
+
+Yeah, and 
+
+_Have fun ...?_
+
+<br />
+
+Yeah, and
+
+
+---
 # Participate!
 
 
+https://github.com/mlverse/torch <br /> _[... and a whole ecosystem to build around `torch` core ...]_
+
+https://github.com/rstudio/tensorflow,
+https://github.com/rstudio/keras,
+https://github.com/rstudio/tfdatasets,
+https://github.com/rstudio/tfruns,
+https://github.com/rstudio/cloudml <br />
+_[... and more ...]_
+
+https://github.com/mlverse <br /> _[a place for model implementations, infrastructure helpers, ... what have you]_
+
+---
+class: black
+
+# Thank you so much for listening!
 
 
-
-
+<figure>
+<img src = "africa2.png" width = 120%"/>
+</figure>
 
 
 
