@@ -50,7 +50,7 @@ a, a > code {
 }
 
 .title-slide {
-  background-image: url('images/RStudio-Logo-Gray.png'), url('images/kenya.png');
+  background-image: url('https://raw.githubusercontent.com/skeydan/invitation_to_deep_learning_in_R/master/theme/images/RStudio-Logo-Gray.png'), url('https://raw.githubusercontent.com/skeydan/invitation_to_deep_learning_in_R/master/theme/images/kenya.png');
   background-repeat: no-repeat;
   background-position: 5% 5%, 98% 92%;
   background-size: 300px, 240px;
